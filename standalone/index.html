@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RedactUs — Strip Identity, Keep Health Data</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface-hover: #222632;
+      --border: #2a2e3b;
+      --text: #e2e4ea;
+      --text-muted: #8b8fa3;
+      --accent: #22c55e;
+      --accent-dim: #166534;
+      --danger: #ef4444;
+      --danger-dim: #7f1d1d;
+      --radius: 10px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    /* ── Header ── */
+    .header {
+      text-align: left;
+      margin-bottom: 36px;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--text);
+    }
+
+    .logo span { color: var(--accent); }
+
+    .tagline {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ── Controls Row ── */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .toggle-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 16px;
+      cursor: pointer;
+      user-select: none;
+      transition: border-color 0.2s;
+    }
+
+    .toggle-wrap:hover { border-color: var(--accent); }
+
+    .toggle-wrap.active { border-color: var(--accent); }
+
+    .toggle-dot {
+      width: 36px;
+      height: 20px;
+      border-radius: 10px;
+      background: var(--border);
+      position: relative;
+      transition: background 0.2s;
+    }
+
+    .toggle-dot::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .toggle-wrap.active .toggle-dot {
+      background: var(--accent-dim);
+    }
+
+    .toggle-wrap.active .toggle-dot::after {
+      transform: translateX(16px);
+      background: var(--accent);
+    }
+
+    .toggle-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .toggle-wrap.active .toggle-label { color: var(--accent); }
+
+    /* Region selector */
+    .region-select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 14px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b8fa3' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+
+    .region-select:hover, .region-select:focus { border-color: var(--accent); }
+
+    /* ── Text Areas ── */
+    .editor-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .editor-grid { grid-template-columns: 1fr; }
+    }
+
+    .editor-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .panel-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+    }
+
+    .panel-label.input-label { color: var(--text-muted); }
+    .panel-label.output-label { color: var(--accent); }
+
+    textarea {
+      width: 100%;
+      min-height: 280px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      color: var(--text);
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    textarea:focus { border-color: var(--accent); }
+    textarea::placeholder { color: var(--text-muted); opacity: 0.5; }
+    textarea.output-area { background: #111318; }
+
+    /* ── Action Row ── */
+    .action-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 24px;
+      border-radius: var(--radius);
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-redact {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .btn-redact:hover { background: #16a34a; transform: translateY(-1px); }
+    .btn-redact:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; transform: none; }
+
+    .btn-copy {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-copy:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-copy.copied { border-color: var(--accent); color: var(--accent); }
+
+    .btn-clear {
+      background: transparent;
+      color: var(--text-muted);
+      padding: 10px 16px;
+    }
+
+    .btn-clear:hover { color: var(--danger); }
+
+    /* ── Stats Bar ── */
+    .stats-bar {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 12px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .stat strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .stat.danger strong { color: var(--danger); }
+
+    /* ── Footer ── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      margin-top: 12px;
+    }
+
+    .footer-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .footer-text a { color: var(--accent); text-decoration: none; }
+    .footer-text a:hover { text-decoration: underline; }
+
+    /* ── Disabled state ── */
+    .disabled-overlay {
+      position: relative;
+    }
+
+    .disabled-overlay.off::after {
+      content: 'Privacy Guard is OFF';
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 17, 23, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--text-muted);
+      border-radius: var(--radius);
+      pointer-events: none;
+    }
+
+    /* ── What stays / what goes ── */
+    .info-section {
+      margin-top: 24px;
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .info-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .info-grid { grid-template-columns: 1fr; }
+    }
+
+    .info-col h4 {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+
+    .info-col.stripped h4 { color: var(--danger); }
+    .info-col.kept h4 { color: var(--accent); }
+
+    .info-col ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .info-col li {
+      font-size: 13px;
+      color: var(--text-muted);
+      padding: 3px 0;
+    }
+
+    .info-col li::before {
+      margin-right: 6px;
+      font-size: 11px;
+    }
+
+    .info-col.stripped li::before { content: '\2716'; color: var(--danger); }
+    .info-col.kept li::before { content: '\2714'; color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">Redact<span>Us</span></div>
+      <div class="tagline">Your data goes to AI. Your identity doesn't.</div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="toggle-wrap active" id="guardToggle" onclick="toggleGuard()" data-testid="guard-toggle">
+        <div class="toggle-dot"></div>
+        <span class="toggle-label">Privacy Guard ON</span>
+      </div>
+      <select class="region-select" id="regionSelect" onchange="changeRegion()" data-testid="region-select">
+        <option value="UK">UK Patterns</option>
+        <option value="US">US Patterns</option>
+        <option value="EU">EU Patterns</option>
+      </select>
+    </div>
+
+    <!-- Editor -->
+    <div class="editor-grid">
+      <div class="editor-panel">
+        <div class="panel-header">
+          <span class="panel-label input-label">Paste your text</span>
+        </div>
+        <textarea
+          id="inputText"
+          placeholder="Paste your lab results, health notes, or AI prompt here..."
+          data-testid="input-textarea"
+        ></textarea>
+      </div>
+      <div class="editor-panel disabled-overlay" id="outputPanel">
+        <div class="panel-header">
+          <span class="panel-label output-label">Redacted output</span>
+        </div>
+        <textarea
+          id="outputText"
+          class="output-area"
+          readonly
+          placeholder="Redacted text appears here..."
+          data-testid="output-textarea"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="action-row">
+      <button class="btn btn-redact" id="redactBtn" onclick="runRedaction()" data-testid="redact-button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Redact
+      </button>
+      <button class="btn btn-copy" id="copyBtn" onclick="copyOutput()" data-testid="copy-button">Copy to Clipboard</button>
+      <button class="btn btn-clear" onclick="clearAll()" data-testid="clear-button">Clear</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar" id="statsBar" style="display:none;" data-testid="stats-bar">
+      <div class="stat" id="statCount"><strong>0</strong> items redacted</div>
+      <div class="stat" id="statStatus">Ready to paste into your AI tool</div>
+    </div>
+
+    <!-- What stays / what goes -->
+    <div class="info-section">
+      <div class="info-title">What stays vs what's stripped</div>
+      <div class="info-grid">
+        <div class="info-col stripped">
+          <h4>Stripped (identity)</h4>
+          <ul>
+            <li>Full name &amp; next of kin</li>
+            <li>Date of birth</li>
+            <li>NHS / SSN / Insurance numbers</li>
+            <li>Home address &amp; postcode / ZIP</li>
+            <li>Phone number &amp; email</li>
+            <li>Hospital &amp; clinician names</li>
+            <li>GP practice name</li>
+            <li>NI number / IBAN</li>
+            <li>Card details &amp; transaction IDs</li>
+            <li>Policy &amp; membership numbers</li>
+            <li>Hospital reference numbers</li>
+          </ul>
+        </div>
+        <div class="info-col kept">
+          <h4>Kept (health data)</h4>
+          <ul>
+            <li>Cholesterol, LDL, HDL values</li>
+            <li>Blood glucose &amp; HbA1c</li>
+            <li>Vitamin levels &amp; hormones</li>
+            <li>Reference ranges &amp; units</li>
+            <li>Symptoms &amp; conditions</li>
+            <li>Medication names &amp; doses</li>
+            <li>Your question to the AI</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-text">
+        RedactUs Core v1.2 &mdash; MIT Licence &mdash; Runs entirely in your browser. No data is sent anywhere.<br>
+        This tool uses pattern matching (regex) to detect and replace personal identifiers. It is not 100% perfect &mdash; see SECURITY.md for honest limitations.<br>
+        Built by the AI Doctor Ben team. <a href="https://github.com/nicholasgriffintn/redactus" target="_blank">GitHub</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════
+    // RedactUs Core Engine v1.2 — MIT Licence
+    // Client-side PII redaction. Zero dependencies. Works offline.
+    // ═══════════════════════════════════════════════════════════════
+
+    let guardEnabled = true;
+    let currentRegion = 'UK';
+
+    // ── Pre-processor ────────────────────────────────────────────
+
+    function stripFormatting(text) {
+      return text
+        .replace(/\*\*\*/g, '')   // bold+italic
+        .replace(/\*\*/g, '')      // bold
+        .replace(/(?<!\S)\*(?!\s)/g, '').replace(/(?<!\s)\*(?!\S)/g, '') // italic
+        .replace(/~~/g, '')        // strikethrough
+        .replace(/\u200B/g, '');   // zero-width spaces
+    }
+
+    // ── Pattern Libraries ──────────────────────────────────────────
+
+    const UK_PATTERNS = {
+      nhs_number: { regex: /\b\d{3}\s?\d{3}\s?\d{4}\b/g, token: '[NHS-REDACTED]', label: 'NHS Number' },
+      ni_number: { regex: /\b[A-Z]{2}\s?\d{2}\s?\d{2}\s?\d{2}\s?[A-D]\b/gi, token: '[NI-REDACTED]', label: 'NI Number' },
+      uk_postcode: { regex: /\b[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}\b/gi, token: '[POSTCODE-REDACTED]', label: 'Postcode' },
+      uk_address: { regex: /\b\d{1,4}\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\s+(?:Street|St|Lane|Ln|Road|Rd|Avenue|Ave|Drive|Dr|Close|Way|Place|Pl|Crescent|Terrace|Court|Ct|Gardens|Grove|Park|Mews|Row|Rise|Hill|Walk|Square|Passage|Yard|Boulevard|Blvd)\b/gi, token: '[ADDRESS-REDACTED]', label: 'Address' },
+      flat_address: { regex: /\b(?:Flat|Apartment|Apt\.?|Unit|Suite)\s+\w+,?\s*(?:\d{1,4}\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\s+(?:Street|St|Lane|Ln|Road|Rd|Avenue|Ave|Drive|Dr|Close|Way|Place|Pl|Crescent|Terrace|Court|Ct|Gardens|Grove|Park|Mews|Row|Rise|Hill|Walk|Square|Boulevard|Blvd))?/gi, token: '[ADDRESS-REDACTED]', label: 'Address' },
+    };
+
+    const US_PATTERNS = {
+      us_address_full: { regex: /\b\d{1,5}\s+(?:[NSEW]{1,2}\.?\s+)?[A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,2}\s+(?:Street|St|Lane|Ln|Road|Rd|Avenue|Ave|Drive|Dr|Close|Way|Place|Pl|Court|Ct|Boulevard|Blvd|Circle|Cir|Parkway|Pkwy|Highway|Hwy)\.?(?:,?\s+(?:(?:Suite|Ste|Apt|Unit|#)\s*\w+,?\s*)?[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*,\s*[A-Z]{2}\s+\d{5}(?:-\d{4})?)?/gi, token: '[ADDRESS-REDACTED]', label: 'Address' },
+      us_city_state_zip: { regex: /(?:,\s*)?[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*,\s*[A-Z]{2}\s+\d{5}(?:-\d{4})?/g, token: '[ADDRESS-REDACTED]', label: 'Address' },
+      us_phone: { regex: /(?<!\d)\(?\d{3}\)?[\s.\-\u2011\u2013]\d{3}[\s.\-\u2011\u2013]\d{4}(?!\d)/g, token: '[PHONE-REDACTED]', label: 'Phone' },
+      us_zip: { regex: /\b\d{5}(?:-\d{4})?\b/g, token: '[ZIP-REDACTED]', label: 'ZIP Code', contextRequired: true, contextKeywords: ['zip','address','addr','state','city','street','ave','blvd','rd','dr','apt'] },
+    };
+
+    const EU_PATTERNS = {
+      eu_iban: { regex: /\b[A-Z]{2}\d{2}\s?(?:\d{4}\s?){3,7}\d{1,4}\b/gi, token: '[IBAN-REDACTED]', label: 'IBAN' },
+      eu_healthcard: { regex: /\b\d{10,20}\b/g, token: '[HEALTHCARD-REDACTED]', label: 'Health Card', contextRequired: true, contextKeywords: ['ehic','health card','insurance','versicherung','carte vitale','tessera sanitaria'] },
+    };
+
+    // Base patterns (always active regardless of region)
+    // ORDER MATTERS: MRN before phone (both match 0-leading digit sequences)
+    const BASE_PATTERNS = {
+      ssn: { regex: /\b\d{3}[\-\u2011\u2013]\d{2}[\-\u2011\u2013]\d{4}\b/g, token: '[SSN-REDACTED]', label: 'SSN' },
+      mrn: { regex: /\b\d{5,10}\b/g, token: '[MRN-REDACTED]', label: 'MRN', contextRequired: true, contextKeywords: ['mrn','medical record','med rec','patient id','patient no','hospital number'] },
+      phone: { regex: /(?<!\d)(?:(?:\+44|\+1)\s?(?:\(\d{3}\)\s?|\d)[\d \-\u2011\u2013\(\)]{7,14}|(?<!\d)0\d{2,4}[\s]?\d{3,4}[\s]?\d{3,4}|\(\d{3}\)\s?\d{3}[\s.\-\u2011\u2013]\d{4})/g, token: '[PHONE-REDACTED]', label: 'Phone' },
+      email: { regex: /[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Z|a-z]{2,}/g, token: '[EMAIL-REDACTED]', label: 'Email' },
+      dob: { regex: /\b\d{1,2}[/\-.]\d{1,2}[/\-.]\d{2,4}\b/g, token: '[DOB-REDACTED]', label: 'Date of Birth', contextRequired: true },
+      hospital_ref: { regex: /\b[A-Z]{1,4}[\-\u2011\u2013]\d{4}[\-\u2011\u2013]\d{2,6}(?:[\-\u2011\u2013]\d{2,4})?\b/g, token: '[REF-REDACTED]', label: 'Hospital Reference', contextRequired: true, contextKeywords: ['hospital number','hospital no','patient id','mrn','reference','hosp'] },
+      insurance_id: { regex: /\b[A-Z]{1,6}[\-\u2011\u2013]\d{2,10}(?:[\-\u2011\u2013]\d{2,10})*(?:[\-\u2011\u2013][A-Z]{2,4})?\b/g, token: '[INSURANCE-REDACTED]', label: 'Insurance/Policy ID', contextRequired: true, contextKeywords: ['insurance','policy','membership','plan','member','provider','group','grp'] },
+      auth_claim: { regex: /\b[A-Z\d]{2,5}[\-\u2011\u2013](?:[A-Z]{2,5}[\-\u2011\u2013])?[\d\-\u2011\u2013]{4,25}\b/g, token: '[CLAIM-REDACTED]', label: 'Auth/Claim Code', contextRequired: true, contextKeywords: ['auth','authorization','authorisation','claim','pre-auth','prior auth','approval','claim id'] },
+      transaction_id: { regex: /\b(?:TXN|REF|INV)[\-\u2011\u2013][\d\-\u2011\u2013]{8,25}\b/gi, token: '[TRANSACTION-REDACTED]', label: 'Transaction ID' },
+      card_last4: { regex: /\b\d{4}\b/g, token: '[CARD-REDACTED]', label: 'Card Digits', contextRequired: true, contextKeywords: ['last 4','last four','card','digits'] },
+    };
+
+    const DOB_CONTEXT_KEYWORDS = ['dob','date of birth','born','birthday','patient','d.o.b','d.o.b.'];
+
+    // Clinician/Organisation prefix patterns
+    const CLINICIAN_PREFIXES = [
+      /\bseen by dr\.?\s+[A-Z][\w.]+(?:\s+[A-Z][\w.]+){0,4}/gi,
+      /\bconsultant:?\s*dr\.?\s+[A-Z][\w.]+(?:\s+[A-Z][\w.]+){0,4}/gi,
+      /\breferring (?:clinician|physician):?\s*(?:dr\.?\s+)?[A-Z][\w.]+(?:\s+[A-Z][\w.]+){0,4}/gi,
+      /\bgp:?\s*dr\.?\s+[A-Z][\w.]+(?:\s+[A-Z][\w.]+){0,4}/gi,
+      /\bgp\s+name:?\s*dr\.?\s+[A-Z][\w.]+(?:\s+[A-Z][\w.]+){0,4}/gi,
+      /\battending(?:\s+physician)?:?\s*(?:dr\.?\s+)?[A-Z][\w.]+(?:\s+[A-Z][\w.]+){0,4}/gi,
+      /\bdoctor:?\s*[A-Z][\w.]+(?:\s+[A-Z][\w.]+){0,4}/gi,
+      /\breported by:?\s*dr\.?\s+[A-Z][\w.]+(?:\s+[A-Z][\w.]+){0,4}/gi,
+      /\bordering\s+(?:physician|provider):?\s*(?:dr\.?\s+)?[A-Z][\w.]+(?:\s+[A-Z][\w.]+){0,4}/gi,
+      /\bphysician:?\s*(?:dr\.?\s+)?[A-Z][\w.]+(?:\s+[A-Z][\w.]+){0,4}/gi,
+      /\bprovider:?\s*(?:dr\.?\s+)?[A-Z][\w.]+(?:\s+[A-Z][\w.]+){0,4}/gi,
+      /\bpractitioner:?\s*(?:dr\.?\s+)?[A-Z][\w.]+(?:\s+[A-Z][\w.]+){0,4}/gi,
+      /\bclinician:?\s*(?:dr\.?\s+)?[A-Z][\w.]+(?:\s+[A-Z][\w.]+){0,4}/gi,
+      /\bDr\.?\s+[A-Z][a-z]+\s+[A-Z]\.?\s*[A-Z][a-z]+/g,
+    ];
+
+    const HOSPITAL_PREFIXES = [
+      /\bat\s+(?:the\s+)?(?:[A-Z][a-zA-Z'.]+\s+){0,4}(?:hospital|clinic|surgery|medical cent(?:re|er)|health cent(?:re|er)|infirmary)\b/gi,
+      /\bhospital:\s*(?:[A-Z][a-zA-Z'.]+\s*)+/gi,
+      /\bclinic:\s*(?:[A-Z][a-zA-Z'.]+\s*)+/gi,
+      /\bgp\s+practice:?\s*(?:[A-Z][a-zA-Z'.]+\s*)+/gi,
+      /\b(?:[A-Z][a-zA-Z'.]+\s+){1,4}(?:medical cent(?:re|er)|hospital|clinic|infirmary)(?:\s*[\u2013\u2014\-]\s*[A-Z][a-zA-Z\s]+)?/gi,
+    ];
+
+    const INSURER_PREFIXES = [
+      /\binsurance +provider:? *[A-Z][a-zA-Z'.]+(?:[ ]+[A-Z][a-zA-Z'.]+)*/gi,
+      /\binsurer:? *[A-Z][a-zA-Z'.]+(?:[ ]+[A-Z][a-zA-Z'.]+)*/gi,
+    ];
+
+    const CO_OCCURRING_DATE_CONTEXT = ['hospital','clinic','seen by','consultant','gp:','surgery','appointment','attended','visit','referred'];
+
+    const NAME_PATTERNS = [
+      /\bpatient:\s*(?:Mr\.?\s+|Mrs?\.?\s+|Ms\.?\s+|Dr\.?\s+)?([A-Z][a-z]+(?:[^\S\n]+[A-Z][a-z]*\.?){0,4})/gi,
+      /\bname:\s*(?:Mr\.?\s+|Mrs?\.?\s+|Ms\.?\s+|Dr\.?\s+)?([A-Z][a-z]+(?:[^\S\n]+[A-Z][a-z]*\.?){0,4})/gi,
+      /\bdear\s+(?:Mr\.?\s+|Mrs?\.?\s+|Ms\.?\s+|Dr\.?\s+)?([A-Z][a-z]+(?:[^\S\n]+[A-Z][a-z]*\.?){0,4})/gi,
+      /\bpatient\s+name:\s*(?:Mr\.?\s+|Mrs?\.?\s+|Ms\.?\s+|Dr\.?\s+)?([A-Z][a-z]+(?:[^\S\n]+[A-Z][a-z]*\.?){0,4})/gi,
+      /\bnext of kin(?!\s+(?:phone|email|address|mobile|tel)):?\s*(?:Mr\.?\s+|Mrs?\.?\s+|Ms\.?\s+|Dr\.?\s+)?([A-Z][a-z]+(?:[^\S\n]+[A-Z][a-z]*\.?){0,4})/gi,
+      /\bemergency contact(?!\s+(?:phone|email|address|mobile|tel)):?\s*(?:Mr\.?\s+|Mrs?\.?\s+|Ms\.?\s+|Dr\.?\s+)?([A-Z][a-z]+(?:[^\S\n]+[A-Z][a-z]*\.?){0,4})/gi,
+      /\bguarantor(?:\s+name)?:?\s*(?:Mr\.?\s+|Mrs?\.?\s+|Ms\.?\s+|Dr\.?\s+)?([A-Z][a-z]+(?:[^\S\n]+[A-Z][a-z]*\.?){0,4})/gi,
+      /\bcardholder(?:\s+name)?:?\s*([A-Z][A-Z\s]{1,30})\b/gi,
+    ];
+
+    // ── Engine ─────────────────────────────────────────────────────
+
+    function getActivePatterns() {
+      const region = currentRegion;
+      let patterns = {};
+      if (region === 'US') {
+        patterns = { ...US_PATTERNS, ...UK_PATTERNS };
+      } else {
+        patterns = { ...UK_PATTERNS };
+      }
+      if (region === 'EU') patterns = { ...patterns, ...EU_PATTERNS };
+      patterns = { ...patterns, ...BASE_PATTERNS };
+      return patterns;
+    }
+
+    function redactText(text) {
+      if (!text || !guardEnabled) return { redactedText: text, totalRedacted: 0 };
+
+      // Strip markdown/rich-text formatting before processing
+      let result = stripFormatting(text);
+      let totalRedacted = 0;
+
+      // Priority 1: Region patterns (regex)
+      const patterns = getActivePatterns();
+      for (const [id, def] of Object.entries(patterns)) {
+        if (def.contextRequired) {
+          if (def.contextKeywords) {
+            result = redactWithContext(result, def, () => totalRedacted++);
+          } else {
+            result = redactDatesInContext(result, def, () => totalRedacted++);
+          }
+        } else {
+          const re = new RegExp(def.regex.source, def.regex.flags);
+          const matches = result.match(re);
+          if (matches) {
+            totalRedacted += matches.length;
+            result = result.replace(re, def.token);
+          }
+        }
+      }
+
+      // Priority 2: Insurer/Clinician/Org prefixes (insurer first — more specific)
+      // Protect existing tokens
+      const placeholders = [];
+      result = result.replace(/\[[A-Z\-]+-REDACTED\]/g, (m) => {
+        const ph = `__PH_${placeholders.length}__`;
+        placeholders.push(m);
+        return ph;
+      });
+
+      for (const regex of INSURER_PREFIXES) {
+        const re = new RegExp(regex.source, regex.flags);
+        const matches = result.match(re);
+        if (matches) {
+          for (const m of matches) {
+            if (m.includes('__PH_')) continue;
+            totalRedacted++;
+            result = result.replace(m, '[INSURER-REDACTED]');
+          }
+        }
+      }
+
+      for (const regex of CLINICIAN_PREFIXES) {
+        const re = new RegExp(regex.source, regex.flags);
+        const matches = result.match(re);
+        if (matches) {
+          for (const m of matches) {
+            if (m.includes('__PH_')) continue;
+            totalRedacted++;
+            result = result.replace(m, '[CLINICIAN-REDACTED]');
+          }
+        }
+      }
+
+      for (const regex of HOSPITAL_PREFIXES) {
+        const re = new RegExp(regex.source, regex.flags);
+        const matches = result.match(re);
+        if (matches) {
+          for (const m of matches) {
+            if (m.includes('__PH_')) continue;
+            totalRedacted++;
+            result = result.replace(m, '[HOSPITAL-REDACTED]');
+          }
+        }
+      }
+
+      // Restore placeholders
+      placeholders.forEach((tok, i) => {
+        result = result.replace(`__PH_${i}__`, tok);
+      });
+
+      // Co-occurring dates
+      const dateRegex = /\b\d{1,2}[/\-.]\d{1,2}[/\-.]\d{2,4}\b/g;
+      const lines = result.split('\n');
+      result = lines.map(line => {
+        const lower = line.toLowerCase();
+        const hasCtx = CO_OCCURRING_DATE_CONTEXT.some(kw => lower.includes(kw));
+        if (!hasCtx) return line;
+        const matches = line.match(dateRegex);
+        if (matches) {
+          totalRedacted += matches.length;
+          return line.replace(dateRegex, '[DATE-REDACTED]');
+        }
+        return line;
+      }).join('\n');
+
+      // Priority 3: Name detection (heuristic)
+      for (const regex of NAME_PATTERNS) {
+        const re = new RegExp(regex.source, regex.flags);
+        let match;
+        while ((match = re.exec(result)) !== null) {
+          if (match[1] && !match[1].includes('REDACTED')) {
+            totalRedacted++;
+            result = result.replace(match[1], '[NAME-REDACTED]');
+          }
+        }
+      }
+
+      return { redactedText: result, totalRedacted };
+    }
+
+    function redactWithContext(text, def, track) {
+      const keywords = def.contextKeywords || [];
+      return text.split('\n').map(line => {
+        const lower = line.toLowerCase();
+        if (!keywords.some(kw => lower.includes(kw))) return line;
+        const re = new RegExp(def.regex.source, def.regex.flags);
+        const matches = line.match(re);
+        if (matches) { matches.forEach(() => track()); return line.replace(re, def.token); }
+        return line;
+      }).join('\n');
+    }
+
+    function redactDatesInContext(text, def, track) {
+      for (const kw of DOB_CONTEXT_KEYWORDS) {
+        const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const proximityRe = new RegExp(escaped + '[:\\s,;.\\-]{0,10}' + def.regex.source, 'gi');
+        const matches = text.match(proximityRe);
+        if (matches) {
+          for (const m of matches) {
+            const dateMatch = m.match(new RegExp(def.regex.source));
+            if (dateMatch) { track(); text = text.replace(dateMatch[0], def.token); }
+          }
+        }
+      }
+      return text;
+    }
+
+    // ── UI Functions ───────────────────────────────────────────────
+
+    function toggleGuard() {
+      guardEnabled = !guardEnabled;
+      const el = document.getElementById('guardToggle');
+      const label = el.querySelector('.toggle-label');
+      const panel = document.getElementById('outputPanel');
+      if (guardEnabled) {
+        el.classList.add('active');
+        label.textContent = 'Privacy Guard ON';
+        panel.classList.remove('off');
+      } else {
+        el.classList.remove('active');
+        label.textContent = 'Privacy Guard OFF';
+        panel.classList.add('off');
+      }
+    }
+
+    function changeRegion() {
+      currentRegion = document.getElementById('regionSelect').value;
+    }
+
+    function runRedaction() {
+      const input = document.getElementById('inputText').value;
+      if (!input.trim()) return;
+
+      const { redactedText, totalRedacted } = redactText(input);
+      document.getElementById('outputText').value = redactedText;
+
+      const statsBar = document.getElementById('statsBar');
+      statsBar.style.display = 'flex';
+      document.getElementById('statCount').innerHTML = `<strong>${totalRedacted}</strong> item${totalRedacted !== 1 ? 's' : ''} redacted`;
+      document.getElementById('statStatus').textContent = totalRedacted > 0
+        ? 'Ready to paste into your AI tool'
+        : 'No personal data detected';
+    }
+
+    function copyOutput() {
+      const output = document.getElementById('outputText').value;
+      if (!output) return;
+      navigator.clipboard.writeText(output).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy to Clipboard'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+
+    function clearAll() {
+      document.getElementById('inputText').value = '';
+      document.getElementById('outputText').value = '';
+      document.getElementById('statsBar').style.display = 'none';
+    }
+
+    // Keyboard shortcut: Ctrl/Cmd + Enter to redact
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        runRedaction();
+      }
+    });
+  </script>
+</body>
+</html>

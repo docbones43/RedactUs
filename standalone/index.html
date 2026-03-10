@@ -462,7 +462,7 @@
     <!-- Footer -->
     <div class="footer">
       <div class="footer-text">
-        RedactUs Core v1.2 &mdash; MIT Licence &mdash; Runs entirely in your browser. No data is sent anywhere.<br>
+        RedactUs Core v1.2.1 &mdash; MIT Licence &mdash; Runs entirely in your browser. No data is sent anywhere.<br>
         This tool uses pattern matching (regex) to detect and replace personal identifiers. It is not 100% perfect &mdash; see SECURITY.md for honest limitations.<br>
         Built by the AI Doctor Ben team. <a href="https://github.com/nicholasgriffintn/redactus" target="_blank">GitHub</a>
       </div>
@@ -570,6 +570,9 @@
       /\bemergency contact(?!\s+(?:phone|email|address|mobile|tel)):?\s*(?:Mr\.?\s+|Mrs?\.?\s+|Ms\.?\s+|Dr\.?\s+)?([A-Z][a-z]+(?:[^\S\n]+[A-Z][a-z]*\.?){0,4})/gi,
       /\bguarantor(?:\s+name)?:?\s*(?:Mr\.?\s+|Mrs?\.?\s+|Ms\.?\s+|Dr\.?\s+)?([A-Z][a-z]+(?:[^\S\n]+[A-Z][a-z]*\.?){0,4})/gi,
       /\bcardholder(?:\s+name)?:?\s*([A-Z][A-Z\s]{1,30})\b/gi,
+      /\bI'?m\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})/g,
+      /\bMy name is\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})/gi,
+      /\bI am\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})/gi,
     ];
 
     // ── Engine ─────────────────────────────────────────────────────

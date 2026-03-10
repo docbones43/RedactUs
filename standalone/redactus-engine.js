@@ -1,5 +1,5 @@
 /**
- * RedactUs Core Engine v1.2
+ * RedactUs Core Engine v1.2.1
  * MIT Licence — https://github.com/nicholasgriffintn/redactus
  *
  * Client-side PII redaction. Zero dependencies. Works offline.
@@ -110,6 +110,9 @@ const NAME_PATTERNS = [
   /\bemergency contact(?!\s+(?:phone|email|address|mobile|tel)):?\s*(?:Mr\.?\s+|Mrs?\.?\s+|Ms\.?\s+|Dr\.?\s+)?([A-Z][a-z]+(?:[^\S\n]+[A-Z][a-z]*\.?){0,4})/gi,
   /\bguarantor(?:\s+name)?:?\s*(?:Mr\.?\s+|Mrs?\.?\s+|Ms\.?\s+|Dr\.?\s+)?([A-Z][a-z]+(?:[^\S\n]+[A-Z][a-z]*\.?){0,4})/gi,
   /\bcardholder(?:\s+name)?:?\s*([A-Z][A-Z\s]{1,30})\b/gi,
+  /\bI'?m\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})/g,
+  /\bMy name is\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})/gi,
+  /\bI am\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})/gi,
 ];
 
 // ── Internal helpers ───────────────────────────────────────────────

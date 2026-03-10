@@ -1,5 +1,6 @@
 # RedactUs
 
+**The tool you MUST run before sending files to ChatGPT.”**
 **Strip identity. Keep health data. 100% client-side.**
 
 RedactUs is a privacy redaction engine that removes personal identifiers from text before it reaches any AI service. It runs entirely in the browser — zero server calls, zero dependencies, works offline.

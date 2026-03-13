@@ -6,7 +6,7 @@
 
 RedactUs is a privacy redaction engine that removes personal identifiers from text before it reaches any AI service. It runs entirely in the browser — zero server calls, zero dependencies, works offline.
 
-Born from [AI Doctor Ben](https://the.aidoctorben.com), a health-tech application where patients need to share medical data with AI without exposing their identity.
+Born from [AI Doctor Ben](https://the.aidoctorben.com), a health-tech application where members need to share medical data with multiple AI without exposing their identity.
 
 ---
 

@@ -43,6 +43,11 @@ Redact directly inside Perplexity, ChatGPT, Claude, and Gemini. No copy-paste �
 
 Visual "What you typed vs What AI sees" preview. Custom blocked fields. Image redaction tools.
 
+## In-Depth Documentation
+- [Redaction Engine Design](docs/REDACTION_DESIGN.md) — Regex patterns, architecture, accuracy trade-offs.
+- [Product Concept](docs/REDACTUS_PRODUCT_CONCEPT.md) — Vision, user personas, differentiation.
+- [Spin-off Reference](docs/REDACTUS_SPINOFF_REFERENCE.md) — Commercial evolution & independence plan.
+  
 ---
 
 ## How It Works

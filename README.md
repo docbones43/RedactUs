@@ -1,6 +1,6 @@
 # RedactUs
 
-**The tool you MUST run before sending files to ChatGPT.**
+**The tool you MUST run before sending files to OpenClaw,ChatGPT, Claude, Perplexity,**
 
 **Strip identity. Keep data such as health queries or financial statements 100% client-side.**
 

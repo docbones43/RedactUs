@@ -87,6 +87,23 @@ Be aware of these limitations:
 
 ---
 
+## Known engine gaps (v1.2)
+
+These are confirmed bugs in the v1.2 engine — documented here so users know what to
+workaround, and so contributors know what's queued for fixing. See `CHANGELOG.md` for
+resolved entries.
+
+### IBANs containing letters in the bank-code section
+- **Example:** `GB29 NWBK 6016 1331 9268 19` (real GB IBAN format).
+- **Status:** Not caught. The v1.2 IBAN regex matches digits-only IBAN bodies
+  (DE / FR style) but rejects IBANs with embedded letter blocks.
+- **Workaround:** Add the IBAN to your custom blocked fields in the Privacy Guard UI,
+  or paste only the last 4 digits to the AI.
+- **Fix planned:** Engine `v1.3` — broaden IBAN regex to accept the alphanumeric body
+  of all ISO 13616 IBAN formats.
+
+---
+
 ## Threat Model
 
 ### What RedactUs Protects Against

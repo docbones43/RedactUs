@@ -1,0 +1,49 @@
+{
+  "name": "redactus",
+  "version": "1.2.0",
+  "description": "Client-side PII redaction for AI applications. Your data goes to AI. Your identity doesn't.",
+  "type": "module",
+  "main": "standalone/redactus-engine.js",
+  "exports": {
+    ".": "./standalone/redactus-engine.js"
+  },
+  "files": [
+    "standalone/redactus-engine.js",
+    "standalone/index.html",
+    "standalone/README.md",
+    "standalone/USER_GUIDE.md",
+    "standalone/SECURITY.md",
+    "standalone/ROADMAP.md",
+    "standalone/LICENSE",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node standalone/tests/run.mjs"
+  },
+  "keywords": [
+    "redaction",
+    "pii",
+    "privacy",
+    "gdpr",
+    "hipaa",
+    "nhs",
+    "ssn",
+    "llm",
+    "ai-privacy",
+    "client-side"
+  ],
+  "author": "AI Doctor Ben team / Whater.org",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/docbones43/RedactUs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/docbones43/RedactUs/issues"
+  },
+  "homepage": "https://github.com/docbones43/RedactUs#readme",
+  "engines": {
+    "node": ">=18"
+  }
+}

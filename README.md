@@ -4,9 +4,9 @@
 
 **Strip identity. Keep data such as health queries or financial statements 100% client-side.**
 
-RedactUs is a privacy redaction engine that removes personal identifiers from text before it reaches any AI service. It runs entirely in the browser — zero server calls, zero dependencies, works offline.
+RedactUs is a privacy redaction engine that removes personal identifiers from text before it reaches any AI service. It runs entirely in the browser - zero server calls, zero dependencies, works offline.
 
-Born from [AI Doctor Ben](https://the.aidoctorben.com), a health-tech application with embedded redaction services where members need to share medical data with multiple AI without exposing their identity.
+Born from [AI Doctor Ben](https://the.aidoctorben.com), a health-tech application with embedded redaction services where members need to share medical data with multiple AI without exposing their identity. (c) Whater.org 
 
 ---
 
@@ -14,9 +14,9 @@ Born from [AI Doctor Ben](https://the.aidoctorben.com), a health-tech applicatio
 
 ### [Standalone Tool](/standalone/) — FREE
 
-A single HTML file. Download it, open it in your browser, paste your text, click Redact. That's it.
+A single HTML file. Download it, open it in your browser, paste your text, click Redact. That's it. PII data redacted> Copy paste back into your AI query box. 
 
-**No installation. No account. No internet required. Works forever.**
+**No installation. No account. No internet required. Works forever free.**
 
 - 20+ pattern types across UK, US, and EU regions
 - Names, addresses, phone numbers, NHS numbers, SSNs, MRNs, insurance IDs, and more
@@ -37,7 +37,7 @@ console.log(result.redactedText);
 
 ### Browser Extension — COMING SOON (Paid)
 
-Redact directly inside Perplexity, ChatGPT, Claude, and Gemini. No copy-paste — the extension intercepts text before submission.
+Redact directly inside any AI tool,Perplexity, ChatGPT, Claude, and Gemini. No copy-paste — the extension intercepts text before submission.
 
 ### RedactUs Preview — COMING SOON (Paid)
 

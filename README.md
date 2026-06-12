@@ -131,4 +131,4 @@ MIT — see [LICENSE](./LICENSE).
 
 ---
 
-Built by the [AI Doctor Ben](https://the.aidoctorben.com) team.
+Built by Whater.org and developed in the [AI Doctor Ben](https://the.aidoctorben.com) platform.

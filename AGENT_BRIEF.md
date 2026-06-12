@@ -39,6 +39,7 @@ If you are working in this repo, your job is to make RedactUs the cleanest possi
 - **Yu-Scan Ltd** owns the underlying IP and **MUST NEVER appear on any public surface.** Not in code comments, not in docs, not in commit messages, not in READMEs, not in licence files. If you see it anywhere public, flag it immediately.
 - **Whater.org** is the mission brand. Qudos Hub Ltd is the operator. Both can appear publicly. Yu-Scan never can.
 - The current root README credits "© Whater.org" and "Built by the AI Doctor Ben team." Both are fine. Do not add Qudos Hub Ltd to the product README unless you are also adding the equivalent legal-entity footer; that decision is open.
+- **Public repo vs private repo.** Public repo (`docbones43/RedactUs`) = shipped artefacts only. Private repo (`docbones43/RedactUs-internal`) = thinking, drafts, IP-sensitive design notes, strategy, pricing internals, churn/retention plans. If a file describes the business model, internal architecture rationale, or anything Yu-Scan-adjacent, it belongs in the private repo. When in doubt, draft private, promote public.
 
 ---
 

@@ -1,6 +1,6 @@
 /**
  * RedactUs Core Engine v1.2.1
- * MIT Licence — https://github.com/nicholasgriffintn/redactus
+ * MIT Licence — https://github.com/docbones43/RedactUs
  *
  * Client-side PII redaction. Zero dependencies. Works offline.
  * Runs entirely in the browser BEFORE any data is sent to server or LLMs.
